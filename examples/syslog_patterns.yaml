@@ -1,0 +1,8 @@
+# Example: sshd "Failed password" lines. Named groups that match LogRecord field names
+# (timestamp, source_ip, user, method, path, status, bytes_sent, user_agent) fill them;
+# any other named group lands in LogRecord.extra.
+log:
+  format: syslog
+  syslog_pattern: '^(?P<timestamp>\w{3}\s+\d+ \d{2}:\d{2}:\d{2}) (?P<host>\S+) sshd\[\d+\]: Failed password for (?:invalid user )?(?P<user>\S+) from (?P<source_ip>\S+) port (?P<port>\d+)'
+  syslog_timestamp_format: "%b %d %H:%M:%S"
+  syslog_default_year: 2026

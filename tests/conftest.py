@@ -1,1 +1,3 @@
-"""Shared fixtures for the Argus test suite."""
+"""Shared fixtures."""
+
+from __future__ import annotations

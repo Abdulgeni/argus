@@ -6,6 +6,7 @@ build-backend = "hatchling.build"
 name = "argus-logs"
 version = "0.1.0"
 description = "Log anomaly detection with optional LLM incident summaries"
+readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "pydantic>=2.5",
@@ -15,7 +16,7 @@ dependencies = [
     "typer>=0.12",
     "rich>=13.7",
     "anthropic>=0.40",
-    "openai>=1.40",
+    "openai>=1.50",
     "pyyaml>=6.0",
 ]
 
@@ -35,9 +36,9 @@ argus = "argus.cli:app"
 packages = ["src/argus"]
 
 [tool.pytest.ini_options]
-addopts = "-q --import-mode=importlib"
+addopts = "-q"
 testpaths = ["tests"]
-pythonpath = ["src"]
+pythonpath = ["src", "."]
 
 [tool.ruff]
 line-length = 100
@@ -47,11 +48,19 @@ src = ["src", "tests"]
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "SIM", "C4", "RUF"]
 
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["E501"]
+"src/argus/llm/prompt.py" = ["E501"]
+
 [tool.mypy]
-python_version = "3.11"
+strict = true
 mypy_path = "src"
 plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = ["sklearn.*", "yaml", "pandas", "pandas.*", "anthropic", "openai", "typer", "rich", "rich.*"]
 ignore_missing_imports = true
-check_untyped_defs = true
-warn_unused_ignores = false
-warn_redundant_casts = true
+
+[[tool.mypy.overrides]]
+module = "argus.cli"
+disallow_untyped_decorators = false

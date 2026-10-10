@@ -180,3 +180,14 @@ def parse_lines(
 def parse_file(path: Path, parser: LogParser) -> ParseOutcome:
     """Stream ``path`` line by line (plain/.gz/.bz2) and parse it."""
     return parse_lines(iter_lines(path), parser)
+
+
+class FileParser:
+    """Pipeline parsing stage: a LogParser bound to ``parse_file``."""
+
+    def __init__(self, parser: LogParser) -> None:
+        self._parser = parser
+
+    def parse(self, path: Path) -> ParseOutcome:
+        """Stream ``path`` and return records, line accounting and findings."""
+        return parse_file(path, self._parser)

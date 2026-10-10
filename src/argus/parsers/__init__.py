@@ -1,7 +1,8 @@
 """Pluggable log parsers. Importing this package registers the built-in parsers."""
 
-from argus.parsers import jsonl, nginx, syslog  # noqa: F401
+from argus.parsers import jsonl, nginx, syslog  # noqa: F401  (registration side effects)
 from argus.parsers.base import (
+    FileParser,
     LogParser,
     ParseError,
     ParseOutcome,
@@ -13,6 +14,7 @@ from argus.parsers.base import (
 )
 
 __all__ = [
+    "FileParser",
     "LogParser",
     "ParseError",
     "ParseOutcome",

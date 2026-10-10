@@ -54,9 +54,7 @@ class SyslogParser(LogParser):
         if not config.syslog_pattern:
             raise ConfigError("log.format is 'syslog' but log.syslog_pattern is not set")
         return cls(
-            config.syslog_pattern,
-            config.syslog_timestamp_format,
-            config.syslog_default_year,
+            config.syslog_pattern, config.syslog_timestamp_format, config.syslog_default_year
         )
 
     def parse_line(self, line: str) -> LogRecord:

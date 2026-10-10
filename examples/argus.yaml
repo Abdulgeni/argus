@@ -1,0 +1,37 @@
+# Annotated sample configuration. Every key is optional; unknown keys are errors.
+# Precedence: built-in defaults < this file < command-line flags.
+log:
+  format: nginx            # nginx | json | syslog
+  # json_fields maps LogRecord fields to (dotted) JSON paths; unlisted fields keep their names.
+  # json_fields:
+  #   timestamp: "@timestamp"
+  #   status: http.response.status_code
+  #   source_ip: client.ip
+  # syslog needs a regex with named groups (see syslog_patterns.yaml):
+  # syslog_pattern: '^(?P<timestamp>\w{3}\s+\d+ \d\d:\d\d:\d\d) \S+ sshd\[\d+\]: Failed password for (?P<user>\S+) from (?P<source_ip>\S+)'
+  # syslog_timestamp_format: "%b %d %H:%M:%S"
+  # syslog_default_year: 2026   # required when the timestamp has no year
+
+features:
+  entities: [source_ip, user, source_ip+user]
+  windows: [1m, 5m, 15m, 1h]
+  business_hours_start: 9        # UTC, inclusive
+  business_hours_end: 17         # UTC, exclusive
+  failed_auth_paths: ['/login', '/auth', '/admin']   # regexes; 401/403 on these = failed auth
+
+detection:
+  contamination: 0.05            # float in (0, 0.5] or "auto"
+  random_state: 42
+  # baseline: baseline.log       # train on this file, score the target
+
+llm:
+  provider: anthropic            # anthropic | openai (keys: ANTHROPIC_API_KEY / OPENAI_API_KEY)
+  # model: claude-sonnet-5-5     # default depends on the provider
+  max_tokens: 1024
+  temperature: 0.0
+  batch_size: 10                 # incidents queued per batch (max 5 calls in flight)
+  cache_ttl_hours: 168           # 7 days
+  timeout_s: 30
+
+cache:
+  # directory: /var/cache/argus  # default: $ARGUS_CACHE_DIR, else ~/.cache/argus

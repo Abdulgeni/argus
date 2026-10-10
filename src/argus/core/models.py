@@ -103,3 +103,73 @@ class Finding(BaseModel):
     level: Literal["info", "warning", "error"]
     code: str
     message: str
+
+
+class AnomalyScore(BaseModel):
+    """Detector output for one feature-matrix row. It only says "unusual", never "malicious"."""
+
+    entity_type: str
+    entity: str
+    window_end: datetime
+    event_row_id: int
+    anomaly_score: float
+    is_anomaly: bool
+    severity: Severity
+
+
+Category = Literal[
+    "brute_force",
+    "scanner",
+    "data_exfiltration",
+    "dos",
+    "misconfiguration",
+    "normal_variation",
+    "unknown",
+]
+
+
+class FeatureDeviation(BaseModel):
+    """One feature of an incident's peak row compared with the run's baseline."""
+
+    feature: str
+    window: str | None
+    value: float
+    baseline: float
+    deviation: float
+
+
+class IncidentReport(BaseModel):
+    """One incident: a group of related anomalous rows plus its (LLM or template) summary."""
+
+    id: str
+    severity: Severity
+    entity_type: str
+    entity: str
+    window_start: datetime
+    window_end: datetime
+    anomaly_score: float
+    anomaly_count: int
+    features: dict[str, float]
+    top_deviations: list[FeatureDeviation]
+    sample_log_lines: list[str]
+    summary: str
+    suspected_category: Category
+    confidence: float
+    evidence: list[str]
+    recommended_action: str
+    llm_used: bool
+    llm_cached: bool = False
+    llm_model: str | None = None
+    warnings: list[str] = Field(default_factory=list)
+
+
+class RunReport(BaseModel):
+    """Everything one scan produced; the single input of every reporter."""
+
+    source: str
+    log_format: str
+    stats: ParseStats
+    feature_rows: int
+    anomalous_rows: int
+    incidents: list[IncidentReport]
+    findings: list[Finding]
